@@ -1,6 +1,16 @@
 from fastapi import FastAPI
+from sqlalchemy import Engine
+
+from configs import settings
+from models import DatabaseConnector, DatabaseConnectorInterface, create
+
 
 app = FastAPI()
+databaseConnector: DatabaseConnectorInterface = DatabaseConnector(settings)
+
+# getting current DB session and creating all tables
+mainDatabaseEngine: Engine = databaseConnector.getEngine()
+create(mainDatabaseEngine)
 
 
 @app.get("/")
