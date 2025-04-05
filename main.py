@@ -3,7 +3,7 @@ from sqlalchemy import Engine
 
 from configs import settings
 from models import DatabaseConnector, DatabaseConnectorInterface, create
-
+from core import Router
 
 app = FastAPI()
 databaseConnector: DatabaseConnectorInterface = DatabaseConnector(settings)
@@ -13,11 +13,5 @@ mainDatabaseEngine: Engine = databaseConnector.getEngine()
 create(mainDatabaseEngine)
 
 
-@app.get("/")
-async def root():
-    return {"message": "Hello World"}
-
-
-@app.get("/hello/{name}")
-async def say_hello(name: str):
-    return {"message": f"Hello {name}"}
+# connecting main router
+app.include_router(Router)
