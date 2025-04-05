@@ -6,4 +6,4 @@ class V1Settings(BaseSettings):
     tags: str = 'Api version 1.0'
 
 
-settings = V1Settings()
+v1settings = V1Settings()
