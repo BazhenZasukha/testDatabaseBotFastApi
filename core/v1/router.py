@@ -52,3 +52,13 @@ def create(lineData: LineSchema = Body(embed=True)):
         "message": "OK",
         "result": newLine.id
     }
+
+@router.delete('/delete/<lineId:int>')
+def delete(lineId: int):
+
+    itemToDelete = crudManager.get(LineModel, lineId)
+    crudManager.delete(itemToDelete)
+
+    return {
+        "message": "OK"
+    }
