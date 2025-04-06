@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Body
 
 from .setting import v1settings
 from configs import settings
@@ -38,8 +38,8 @@ def get_all():
     return response
 
 
-@router.get('/create')
-def create(lineData: LineSchema):
+@router.post('/create')
+def create(lineData: LineSchema = Body(embed=True)):
     newLine = LineModel(
         summ=lineData.summ,
         description=lineData.description,
