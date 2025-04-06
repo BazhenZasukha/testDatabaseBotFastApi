@@ -1,5 +1,9 @@
 from pydantic_settings import BaseSettings
-from sqlalchemy import create_engine, Engine, Column, Integer, ForeignKey, String, Float, DateTime
+from sqlalchemy import (
+    create_engine, Engine, Column,
+    Integer, ForeignKey, String,
+    Float, DateTime
+)
 from sqlalchemy.orm import Session, declarative_base
 from datetime import datetime
 
@@ -17,8 +21,8 @@ class Line(Base):
     id = Column(Integer, primary_key=True)
     summ = Column(Float, nullable=False)
     description = Column(String(1000))
-    created_on = Column(DateTime(), default=datetime.now)
-
+    created_at = Column(DateTime(), default=datetime.now)
+    created_by = Column(String(100)) # telegram`s id
 
 
 
