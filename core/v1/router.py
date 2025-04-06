@@ -62,3 +62,11 @@ def delete(lineId: int):
     return {
         "message": "OK"
     }
+
+@router.put('/update/<lineId:int>')
+def delete(lineId: int, updateInfo: dict = Body(embed=True)):
+    crudManager.update(LineModel, updateInfo, id=lineId)
+
+    return {
+        "message": "OK"
+    }

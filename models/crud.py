@@ -36,4 +36,6 @@ class CrudManager(CrudInterface):
         self.__session.delete(_object)
         if isCommit: self.__session.commit()
 
-    def update(self, *args, isCommit=True): ...
+    def update(self, model, updateData, id:int, isCommit=True):
+        self.__session.query(model).filter_by(id=id).update(updateData)
+        if isCommit: self.__session.commit()
