@@ -22,8 +22,8 @@ class CrudManager(CrudInterface):
     def __init__(self, session: Session):
         self.__session = session
 
-    def getAll(self, model):
-        return self.__session.query(model).all()
+    def getAll(self, model, creator: str):
+        return self.__session.query(model).filter_by(created_by=creator).all()
 
     def create(self, object, isCommit=True):
         self.__session.add(object)

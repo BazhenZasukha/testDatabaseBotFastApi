@@ -1,6 +1,6 @@
-from locale import currency
+from typing import Annotated
 
-from fastapi import APIRouter, Body
+from fastapi import APIRouter, Body, Path
 
 from .setting import v1settings
 from configs import settings
@@ -29,12 +29,13 @@ def check():
 
 
 # CRUD operations for database lines
-@router.get('/getall')
-def get_all():
-    lines = crudManager.getAll(LineModel)
+@router.get('/getall/{creator}')
+def get_all(creator: Annotated[str, Path(title="ID of user")]):
+    lines = crudManager.getAll(LineModel, creator)
 
     response = {
         "message": "OK",
+        "creator": creator,
         "data": lines
     }
 
@@ -60,8 +61,8 @@ def create(lineData: LineSchema = Body(embed=True)):
         "result": newLine.id
     }
 
-@router.delete('/delete/<lineId:int>')
-def delete(lineId: int):
+@router.delete('/delete/{lineId}')
+def delete(lineId: Annotated[int, Path(title="ID of line")]):
     itemToDelete = crudManager.get(LineModel, lineId)
     crudManager.delete(itemToDelete)
 
@@ -69,8 +70,8 @@ def delete(lineId: int):
         "message": "OK"
     }
 
-@router.put('/update/<lineId:int>')
-def update(lineId: int, updateInfo: dict = Body(embed=True)):
+@router.put('/update/{lineId}')
+def update(lineId: Annotated[int, Path(title="ID of line")], updateInfo: dict = Body(embed=True)):
     _, uah_to_usd, currencyK = parseUsdCurrency()
 
     if 'summ' in updateInfo:

@@ -16,7 +16,7 @@ class Connector:
 
     def ask(self, url: str, method: Method=Get, header: dict=None, body: dict=None) -> str|dict|int:
         session = requests.Session()
-        session.headers.update(header)
+        if header: session.headers.update(header)
 
         if method == Get: req = session.get(url, params=body)
         elif method == Post: req = session.post(url, params=body)

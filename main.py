@@ -22,5 +22,5 @@ create(mainDatabaseEngine)
 app.include_router(Router)
 
 if __name__ == '__main__':
-    threading.Thread(target=asyncio.run, args=(startTelegramBot(settings.telegram_bot_token),), daemon=True).start()
+    threading.Thread(target=asyncio.run, args=(startTelegramBot(settings),), daemon=True).start()
     uvicorn.run("main:app", host=settings.api_host, port=settings.api_port, reload=False)
