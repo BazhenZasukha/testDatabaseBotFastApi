@@ -1,3 +1,5 @@
+from locale import currency
+
 from fastapi import APIRouter, Body
 
 from .setting import v1settings
@@ -5,6 +7,7 @@ from configs import settings
 from models import DatabaseConnector, DatabaseConnectorInterface, LineModel
 from models.crud import CrudManager, CrudInterface
 from .schemas.line import LineSchema
+from .usd_parser import parseCurrency as parseUsdCurrency
 
 import datetime
 
@@ -40,8 +43,12 @@ def get_all():
 
 @router.post('/create')
 def create(lineData: LineSchema = Body(embed=True)):
+    _, uah_to_usd, currencyK = parseUsdCurrency()
+
     newLine = LineModel(
         summ=lineData.summ,
+        summ2usd=lineData.summ * currencyK,
+        currency=uah_to_usd,
         description=lineData.description,
         created_at=datetime.datetime.now(),
         created_by = lineData.created_by
@@ -55,7 +62,6 @@ def create(lineData: LineSchema = Body(embed=True)):
 
 @router.delete('/delete/<lineId:int>')
 def delete(lineId: int):
-
     itemToDelete = crudManager.get(LineModel, lineId)
     crudManager.delete(itemToDelete)
 
@@ -64,7 +70,13 @@ def delete(lineId: int):
     }
 
 @router.put('/update/<lineId:int>')
-def delete(lineId: int, updateInfo: dict = Body(embed=True)):
+def update(lineId: int, updateInfo: dict = Body(embed=True)):
+    _, uah_to_usd, currencyK = parseUsdCurrency()
+
+    if 'summ' in updateInfo:
+        updateInfo['summ2usd'] = updateInfo['summ'] * currencyK
+    updateInfo['currency'] = uah_to_usd
+
     crudManager.update(LineModel, updateInfo, id=lineId)
 
     return {

@@ -19,7 +19,10 @@ Base = declarative_base()
 class Line(Base):
     __tablename__ = 'lines'
     id = Column(Integer, primary_key=True)
+
     summ = Column(Float, nullable=False)
+    summ2usd = Column(Float, nullable=False)
+    currency = Column(Float, nullable=False)
     description = Column(String(1000))
     created_at = Column(DateTime(), default=datetime.now)
     created_by = Column(String(100)) # telegram`s id
