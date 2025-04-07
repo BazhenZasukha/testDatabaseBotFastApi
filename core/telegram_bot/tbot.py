@@ -1,10 +1,12 @@
 import asyncio
 import sys
 import logging
-import threading
 
 from aiogram import Bot, Dispatcher, types
 from aiogram.filters.command import Command
+from aiogram import F
+
+from .keyboards.main_kb import main_menu_keyboard
 
 
 logging.basicConfig(level=logging.INFO)
@@ -13,7 +15,15 @@ dp = Dispatcher()
 
 @dp.message(Command("start"))
 async def cmd_start(message: types.Message):
-    await message.answer("Hello!")
+    await message.answer(
+        "Hello! Im your notes manager. I will collect all your notes about your costs :3",
+        reply_markup=main_menu_keyboard
+    )
+
+@dp.message(F.text.lower() == "my notes")
+async def cmd_my_notes(message: types.Message):
+    user = message.from_user.id
+
 
 
 def getArgument(l: list, arg_name: str) -> None|str:
