@@ -37,9 +37,9 @@ async def cmd_my_notes(message: types.Message):
     if type(apiResponse) == dict:
         if apiResponse['data'] == []: answer += 'You dont have any notes!'
         else:
-            answer += 'Your notes: '
+            answer += 'Your notes: \n'
             for note in apiResponse['data']:
-                answer += f'{note['id']}) {note['summ']} ({note['summ2usd']}USD, 1 USD = {note['currency']}) -> {note['description']}\n'
+                answer += f'{note['id']}) {round(note['summ'], 3)} ({round(note['summ2usd'], 3)}$, 1 USD = {note['currency']}) -> {note['description']}\n'
     elif type(apiResponse) == int:
         answer += f'Request to API gave a {apiResponse} status code!'
     else: answer += f'Request to API gave a \n"{apiResponse}"'
