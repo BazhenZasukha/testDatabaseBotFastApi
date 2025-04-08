@@ -1,25 +1,31 @@
 import asyncio
 import sys
 import logging
+from datetime import datetime
+import os
 
 from aiogram import Bot, Dispatcher, types
 from aiogram.filters.command import Command
 from aiogram import F
-from aiogram.utils.formatting import as_numbered_section
 from pydantic_settings import BaseSettings
+from aiogram.types import FSInputFile, InputFile
 
 from .keyboards.main_kb import main_menu_keyboard
 from .keyboards.return_to_menu_kb import return_to_main_menu_keyboard
 from .modules.api_connector import Connector as ApiConnector
 from .modules.api_connector import Method, Get, Post, Put, Delete
+from .modules.excel_manager import Manager as ExcelManager
 
 
 logging.basicConfig(level=logging.INFO)
-dp = Dispatcher()
-apiConnector = ApiConnector()
-settings = None
-API_URL = ''
-actions = {}
+dp = Dispatcher()  # for tbot routes
+bot = None # aiogram bot obj
+apiConnector = ApiConnector()  # for requests to api
+settings = None  # Baseettings object from fast api part
+API_URL = '' # API host
+actions = {} # user actions manager
+excelManager = ExcelManager()  # excel files manager (write and save)
+
 
 # list of all commands which change notes (create, update etc.)
 NOTE_COMMANDS = {
@@ -76,6 +82,41 @@ async def cmd_return_to_main_menu(message: types.Message):
     await message.answer(
         'You`re in main menu.', reply_markup=main_menu_keyboard
     )
+
+
+# an ordinary variable name in da hood
+@dp.message(F.text.lower() == "download .xlsx")
+async def cmd_download_my_notes_as_xlsx_file_without_ads_and_sms_please(message: types.Message):
+    user = message.from_user.id
+
+    # getting my notes
+    apiResponse = apiConnector.ask(f'{API_URL}/api/v1/getall/{user}')
+
+    if type(apiResponse) != dict:
+        await message.answer(f'Cannot get your notes from API!\nResponse: {apiResponse}')
+        return 0
+
+    wb, sheet = excelManager.createWorkbook()
+    noteId = 2
+    await message.answer('Creating excel file...')
+
+    for note in apiResponse['data']:
+        excelManager.write(sheet, 'A', noteId, note['id']) # write id
+        excelManager.write(sheet, 'B', noteId, note['created_at']) # write date
+        excelManager.write(sheet, 'C', noteId, note['summ']) # write price
+        excelManager.write(sheet, 'D', noteId, note['summ2usd']) # write price in ud
+        excelManager.write(sheet, 'E', noteId, note['currency']) # write currency (price for 1 usd)
+        excelManager.write(sheet, 'F', noteId, note['description']) # write description
+
+        noteId += 1
+
+    # saving new file
+    filename = f'{datetime.now().strftime("%H-%M-%S %Y-%m-%d")}__{user}.xlsx'
+    excelManager.save(wb, filename)
+    fileForUplodaing: InputFile = FSInputFile(path=filename)
+
+    await bot.send_document(user, fileForUplodaing)
+    os.remove(filename)
 
 
 # global text checker (will check all messages, also for commands from NOTE_COMMANDS)
@@ -167,6 +208,7 @@ def getArgument(l: list, arg_name: str) -> None|str:
 async def startTelegramBot(_settings: BaseSettings):
     global settings
     global API_URL
+    global bot
 
     settings = _settings
     API_URL = f'http://{settings.api_host if settings.api_host != '0.0.0.0' else '127.0.0.1'}:{settings.api_port}'
