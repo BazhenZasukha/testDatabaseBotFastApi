@@ -5,6 +5,8 @@
 
 <div style="border: 1px solid white; padding: 10px; padding-top: 0px;">
 <h3 style="color: red">Assignment</h3>
+```diff
+- Red text test
 
 <h4>Implement the server-side of the Telegram bot as an API using the FastAPI framework.</h4>
 <p>The API should include the following endpoints:</p>
