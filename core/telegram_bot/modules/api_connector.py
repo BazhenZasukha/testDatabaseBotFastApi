@@ -28,3 +28,4 @@ class Connector:
             try: return req.json()
             except: return req.text()
         else: return req.status_code
+
