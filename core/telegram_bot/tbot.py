@@ -16,6 +16,8 @@ logging.basicConfig(level=logging.INFO)
 dp = Dispatcher()
 apiConnector = ApiConnector()
 settings = None
+actions = {}
+
 
 @dp.message(Command("start"))
 async def cmd_start(message: types.Message):
@@ -46,7 +48,7 @@ async def cmd_my_notes(message: types.Message):
 
     await message.answer(answer, reply_markup=main_menu_keyboard)
 
-
+@dp.message(F.text.lower() == "")
 
 
 def getArgument(l: list, arg_name: str) -> None|str:
