@@ -4,6 +4,7 @@
 <p>It is required to implement a Telegram bot for expense tracking, which will interact with a server to perform CRUD operations via API requests.</p>
 
 <h3>Demo</h3>
+https://github.com/user-attachments/assets/28884be8-dc25-496c-9834-746f379d31ec
 
 
 <h3>How to use?</h3>
