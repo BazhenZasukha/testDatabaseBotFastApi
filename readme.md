@@ -3,6 +3,17 @@
 <h3 style="color: red">General Task Description: </h3>
 <p>It is required to implement a Telegram bot for expense tracking, which will interact with a server to perform CRUD operations via API requests.</p>
 
+<h3>Demo</h3>
+
+
+<h3>How to use?</h3>
+<li>Install last python version (3.12+)</li>
+<li>Download source code via <code>git clone https://github.com/SamanuelAdmin/testDatabaseBotFastApi</code></li>
+<li>Install all dependencies using <code>pip3 install -r requirements.txt</code></li>
+<li>Create your .env file using template (.env.template)</li>
+<li>Start project with <code>python main.py</code></li>
+
+<br>
 <div style="border: 1px solid white; padding: 10px; padding-top: 0px;">
 <h3 style="color: red">Assignment</h3>
 
