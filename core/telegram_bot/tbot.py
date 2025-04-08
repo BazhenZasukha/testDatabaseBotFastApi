@@ -48,7 +48,44 @@ async def cmd_my_notes(message: types.Message):
 
     await message.answer(answer, reply_markup=main_menu_keyboard)
 
-@dp.message(F.text.lower() == "")
+@dp.message(F.text.lower() == "create")
+async def cmd_create(message: types.Message):
+    global actions
+
+    user = message.from_user.id
+    actions[user] = 'create'
+
+    await message.answer('Send me your note using structure: \nCost (in UAH)\nDescription\nFor example:\n120\nFor some needs.')
+
+
+# global text checker (will check all messages)
+@dp.message()
+async def global_text_handler(message: types.Message):
+    global actions
+
+    user = message.from_user.id
+    text = message.text
+
+    if actions[user] == 'create':
+        try:
+            price, description = text.split('\n')
+            price = int(price)
+        except: await message.answer('Incorrect structure! Cannot parse your message.')
+        else:
+            apiConnector.ask(
+                f'http://{settings.api_host if settings.api_host != '0.0.0.0' else '127.0.0.1'}:{settings.api_port}/api/v1/create',
+                Post, header={"Content-Type": "application/json"},
+                body={
+                    "lineData": {
+                        "summ": price,
+                        "description": description,
+                        "created_by": str(user)
+                    }
+                }
+            )
+
+            await message.answer('Your note has been added.', reply_markup=main_menu_keyboard)
+    else: pass
 
 
 def getArgument(l: list, arg_name: str) -> None|str:

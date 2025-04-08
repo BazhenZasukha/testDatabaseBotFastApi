@@ -14,14 +14,14 @@ class Connector:
     def __init__(self):
         pass
 
-    def ask(self, url: str, method: Method=Get, header: dict=None, body: dict=None) -> str|dict|int:
+    def ask(self, url: str, method: Method=Get, header: dict|None=None, body: dict|None=None) -> str|dict|int:
         session = requests.Session()
         if header: session.headers.update(header)
 
         if method == Get: req = session.get(url, params=body)
-        elif method == Post: req = session.post(url, params=body)
-        elif method == Put: req = session.put(url, params=body)
-        elif method == Delete: req = session.delete(url, params=body)
+        elif method == Post: req = session.post(url, json=body)
+        elif method == Put: req = session.put(url, json=body)
+        elif method == Delete: req = session.delete(url, json=body)
         else: raise Exception('Method not supported, please choose one from Get, Post, Put, Delete')
 
         if req.status_code == 200:
