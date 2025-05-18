@@ -21,6 +21,20 @@ create(mainDatabaseEngine)
 # connecting main router
 app.include_router(Router)
 
+
+async def startFastApiServer():
+    # uvicorn.run("main:app", host=settings.api_host, port=settings.api_port, reload=False)
+    config = uvicorn.Config(app=app, host=settings.api_host, port=settings.api_port, log_level="info", reload=False)
+    server = uvicorn.Server(config)
+    await server.serve()
+
+async def main():
+    await asyncio.gather(
+        startTelegramBot(settings), startFastApiServer()
+    )
+
 if __name__ == '__main__':
-    threading.Thread(target=asyncio.run, args=(startTelegramBot(settings),), daemon=True).start()
-    uvicorn.run("main:app", host=settings.api_host, port=settings.api_port, reload=False)
+    #threading.Thread(target=asyncio.run, args=(startTelegramBot(settings),), daemon=True).start()
+    #uvicorn.run("main:app", host=settings.api_host, port=settings.api_port, reload=False)
+    asyncio.run(main())
+    
